@@ -48,37 +48,32 @@ Please edit the email ID in the script `watchdog.sh`
 ## Patterns defined as dangerous
 
 `rm[[:space:]]+-rf[[:space:]]+/`
-
-This command might recursively and forcefully delete a root file/directory
+- This command might recursively and forcefully delete a root file/directory
 
 `mkfs`
-
-Formatting a filesystem can permanently erase stored data
+- Formatting a filesystem can permanently erase stored data
 
 `shutdown|reboot|poweroff`
-
-Shutdown / reboot / power off commands might switch off the services 
+- Shutdown / reboot / power off commands might switch off the services 
 
 `/dev/tcp|nc .* -e|bash -i >&|0>&1`
-
-These patterns are commonly used to create reverse shells that provide attackers remote access to a system.
+- These patterns are commonly used to create reverse shells that provide attackers remote access to a system.
 
 `curl.*\|.*(sh|bash)`
-
-This pattern might install malware in the machine
+- This pattern might install malware in the machine
 
 ## Rejection of Specific env lines
 
  `^PATH=`
 
-Prevents users from changing the system `PATH` variable, which could cause commands to run from unexpected locations.
+- Prevents users from changing the system `PATH` variable, which could cause commands to run from unexpected locations.
 
  `="[^ ]+"`
 
-Rejects unnecessary quotes around values that do not contain spaces, helping keep the `.env` file clean and consistent.
+- Rejects unnecessary quotes around values that do not contain spaces, helping keep the `.env` file clean and consistent.
 
 `^export`
 
-`.env` files should only contain key-value pairs. Rejecting `export` prevents shell-specific commands from being included.
+- `.env` files should only contain key-value pairs. Rejecting `export` prevents shell-specific commands from being included.
 
 # Thank You
