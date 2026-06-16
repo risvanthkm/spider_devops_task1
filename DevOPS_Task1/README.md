@@ -15,6 +15,8 @@ This project containerizes the CR45 Reduced full-stack application consisting of
 
 >The objective of this deployment is to provide a reproducible production-oriented setup using Docker and Docker Compose while preserving authentication, database migrations, and reverse proxying, and persistent storage behavior.
 
+DevOps Task-1 Working Video : https://docs.google.com/videos/d/1wcNlATUuqMzJWwEzHq73g2hP0ant9h0M8--BaYdHGPs/edit?usp=sharing
+
 ## Features 
 
 ---
