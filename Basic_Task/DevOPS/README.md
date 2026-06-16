@@ -3,7 +3,7 @@
 ## Overview
 > The script vault_sweep.sh is a bash script that scans repositories for dangerous scripts, insecure permissions, suspicious files, exposed credentials, and invalid environment configurations. It also sanitizes the .env files.
 
-> The script watchdog.sh is a bash script which scans for the warning in the vault_sweep.log file, and it alerts the user by sending an email.
+> The script watchdog.sh is a bash script, runs vault_sweep.sh and scans for the warning in the vault_sweep.log file, and it alerts the user by sending an email.
 
 ---
 
@@ -69,16 +69,18 @@ This pattern might install malware in the machine
 
 ## Rejection of Specific env lines
 
-`^PATH=`
+## Rejection of Specific `.env` Lines
 
-This might introduce security risks
+### `^PATH=`
 
-`="[^ ]+"`
+Prevents users from changing the system `PATH` variable, which could cause commands to run from unexpected locations.
 
-This greps the unnessary quotes. But doesn't affect where quotes are neccessary (i.e. "app key")
+### `="[^ ]+"`
 
-`^export`
+Rejects unnecessary quotes around values that do not contain spaces, helping keep the `.env` file clean and consistent.
 
-Prevents exporting PATH
+### `^export`
+
+`.env` files should only contain key-value pairs. Rejecting `export` prevents shell-specific commands from being included.
 
 # Thank You
