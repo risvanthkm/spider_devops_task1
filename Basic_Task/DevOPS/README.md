@@ -69,17 +69,15 @@ This pattern might install malware in the machine
 
 ## Rejection of Specific env lines
 
-## Rejection of Specific `.env` Lines
-
-### `^PATH=`
+ `^PATH=`
 
 Prevents users from changing the system `PATH` variable, which could cause commands to run from unexpected locations.
 
-### `="[^ ]+"`
+ `="[^ ]+"`
 
 Rejects unnecessary quotes around values that do not contain spaces, helping keep the `.env` file clean and consistent.
 
-### `^export`
+`^export`
 
 `.env` files should only contain key-value pairs. Rejecting `export` prevents shell-specific commands from being included.
 
