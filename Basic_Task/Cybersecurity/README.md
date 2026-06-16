@@ -39,7 +39,7 @@ Using --verify flag
 
 `python Cryptovault.py decrypt <filename> --shift <desired_shift> --verify`
 
-## WRITEUPS
+## WRITEUP
 
 **Why is Caesar trivially breakable?** 
 
