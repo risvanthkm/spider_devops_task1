@@ -92,6 +92,8 @@ This project containerizes the CR45 Reduced full-stack application consisting of
 
 Run this command to create self-signed TLS certificate and a private key 
 
+`mkdir certs`
+
 ```
 openssl req \
 -x509 \
