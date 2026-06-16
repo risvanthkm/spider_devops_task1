@@ -299,7 +299,7 @@ server {
 
 Also redirection from HTTP to HTTPS is also implemeted using the HTTP status code 301
 
-To verify this visit `http://localhost` ( when containers are running )
+To verify this visit `http://localhost`
 
 ---
 
