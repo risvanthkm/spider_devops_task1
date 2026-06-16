@@ -20,10 +20,10 @@ This section has 3 tasks from domains DevOps, Cybersecurity and AppDev.
 >Developed an interactive browser-based game using HTML, CSS, and JavaScript. Implemented game logic, player interactions, dynamic UI updates, and styling.
 
 ## Domain Specific Task 
->This section has the DevOps task 1 which containerizes a full-stack web application built with React frontend, Go backend and PostgreSQL database.
+This section has the DevOps task 1 which containerizes a full-stack web application built with React frontend, Go backend and PostgreSQL database.
 
 ### DevOps
-This task containerizes the CR45 Reduced full-stack application using Docker and Docker Compose. The deployment includes a React frontend served by Nginx, a Go backend, and a PostgreSQL database running as separate containers. Nginx provides SPA routing, reverse proxying, HTTPS support, and HTTP-to-HTTPS redirection. Additional improvements include PostgreSQL health checks, access/error logging, Gzip compression, static asset caching, and performance tuning. The setup delivers a reproducible, secure, and production-oriented deployment with persistent storage. 
+>This task containerizes the CR45 Reduced full-stack application using Docker and Docker Compose. The deployment includes a React frontend served by Nginx, a Go backend, and a PostgreSQL database running as separate containers. Nginx provides SPA routing, reverse proxying, HTTPS support, and HTTP-to-HTTPS redirection. Additional improvements include PostgreSQL health checks, access/error logging, Gzip compression, static asset caching, and performance tuning. The setup delivers a reproducible, secure, and production-oriented deployment with persistent storage. 
 
 [DevOps Task1 Documentation](/DevOPS_Task1/README.md)
 
