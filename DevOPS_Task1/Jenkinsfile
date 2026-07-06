@@ -101,7 +101,18 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                dir ('DevOPS_Task1'){
+                dir ('DevOPS_Task1') {
+                    withCredentials([
+                    file(credentialsId: 'servercert', variable: 'CERT'),
+                    file(credentialsId: 'serverkey', variable: 'KEY')
+                ]) {
+                    sh '''
+                        mkdir -p certs
+                        cp "$CERT" certs/server.crt
+                        cp "$KEY" certs/server.key
+                    '''
+                }
+                    
                     sh '''
 
                     docker compose pull
@@ -117,10 +128,11 @@ pipeline {
             steps {
                 sh '''
                 sleep 10
-                curl --fail http://localhost:443
+                curl --fail --insecure https://localhost
                 '''
             }
-}
+        }
+
     }
 
     post {
