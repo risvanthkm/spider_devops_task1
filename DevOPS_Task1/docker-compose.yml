@@ -1,17 +1,42 @@
 version: "3"
 
 services:
-  backend:
+
+  backend1:
     image: risvanthkm/devops-task-backend:latest
     environment:
       HTTP_ADDR: ":9090"
       DATABASE_URL: postgres://postgres:postgres@db:5432/cr45_reduced?sslmode=disable
       APP_SECRET: cr45-reduced-dev-secret
     ports:
-      - "9090:9090"
+      - "9091:9090"
     depends_on:
       db:
         condition: service_healthy
+
+    backend2:
+      image: risvanthkm/devops-task-backend:latest
+      environment:
+        HTTP_ADDR: ":9090"
+        DATABASE_URL: postgres://postgres:postgres@db:5432/cr45_reduced?sslmode=disable
+        APP_SECRET: cr45-reduced-dev-secret
+      ports:
+        - "9092:9090"
+      depends_on:
+        db:
+          condition: service_healthy
+        
+    backend3:
+      image: risvanthkm/devops-task-backend:latest
+      environment:
+        HTTP_ADDR: ":9090"
+        DATABASE_URL: postgres://postgres:postgres@db:5432/cr45_reduced?sslmode=disable
+        APP_SECRET: cr45-reduced-dev-secret
+      ports:
+        - "9093:9090"
+      depends_on:
+        db:
+          condition: service_healthy
 
   frontend:
     image: risvanthkm/devops-task-frontend:latest

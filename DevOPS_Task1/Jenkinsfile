@@ -108,8 +108,8 @@ pipeline {
                 ]) {
                     sh '''
                         mkdir -p certs
-                        cp "$CERT" certs/server.crt
-                        cp "$KEY" certs/server.key
+                    cp "$CERT" certs/nginx_ssl.crt
+                    cp "$KEY" certs/nginx_ssl.key
                     '''
                 }
                     
