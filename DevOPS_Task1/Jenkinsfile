@@ -15,6 +15,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+                sh 'cd DevOPS_Task1/'
             }
         }
 
