@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB_USERNAME = "risvanthkm"
+        PATH = "/usr/local/go/bin:${env.PATH}"
 
         FRONTEND_IMAGE = "${DOCKERHUB_USERNAME}/devops-task-frontend"
         BACKEND_IMAGE  = "${DOCKERHUB_USERNAME}/devops-task-backend"
