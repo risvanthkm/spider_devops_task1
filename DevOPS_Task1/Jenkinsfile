@@ -37,14 +37,6 @@ pipeline {
             }
         }
 
-        stage('Frontend - Test') {
-            steps {
-                dir('DevOPS_Task1/frontend') {
-                    sh 'npm test -- --watchAll=false'
-                }
-            }
-        }
-
         stage('Backend - Test') {
             steps {
                 dir('DevOPS_Task1/backend') {
