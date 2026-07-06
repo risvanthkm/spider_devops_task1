@@ -100,10 +100,6 @@ pipeline {
         }
 
         stage('Deploy') {
-            when {
-                branch 'main'
-            }
-
             steps {
                 dir ('DevOPS_Task1'){
                     sh '''
@@ -121,7 +117,7 @@ pipeline {
             steps {
                 sh '''
                 sleep 10
-                curl --fail http://localhost
+                curl --fail http://localhost:443
                 '''
             }
 }
