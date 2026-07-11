@@ -117,9 +117,7 @@ pipeline {
                     sh '''
 
                     docker compose pull
-
                     docker compose up -d
-
                     docker image prune -f
                     '''
                 }
@@ -133,19 +131,15 @@ pipeline {
                 '''
             }
         }
-
     }
 
     post {
-
         success {
             echo "Pipeline completed successfully."
         }
-
         failure {
             echo "Pipeline failed."
         }
-
         always {
             cleanWs()
         }
