@@ -6,7 +6,22 @@ ENV VITE_CLASS_ID=107125
 
 COPY package*.json ./
 
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+RUN groupadd -r appgroup && \
+    useradd -r -g appgroup appuser && \
+    chown -R appuser:appgroup /app
+
+USER appuser
+
+RUN npm install
+
+COPY --chown=appuser:appgroup . .
+
+RUN npm run build
+
+FROM nginx:alpine
+
+RUN addgroup -S appgroup && \
+    adduser -S appuser -G appgroup
 
 RUN chown -R appuser:appgroup \
     /usr/share/nginx/html \
@@ -14,19 +29,11 @@ RUN chown -R appuser:appgroup \
     /var/run \
     /var/log/nginx
 
-USER appuser
-
-RUN npm install
-
-COPY . . 
-
-RUN npm run build
-
-FROM nginx:alpine
-
 COPY nginx.conf /etc/nginx/nginx.conf
 
 COPY --from=builder /app/dist /usr/share/nginx/html
+
+USER appuser
 
 EXPOSE 80
 
