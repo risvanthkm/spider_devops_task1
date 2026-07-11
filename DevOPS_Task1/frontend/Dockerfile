@@ -6,6 +6,16 @@ ENV VITE_CLASS_ID=107125
 
 COPY package*.json ./
 
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+RUN chown -R appuser:appgroup \
+    /usr/share/nginx/html \
+    /var/cache/nginx \
+    /var/run \
+    /var/log/nginx
+
+USER appuser
+
 RUN npm install
 
 COPY . . 
