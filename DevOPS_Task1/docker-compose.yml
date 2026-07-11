@@ -1,7 +1,4 @@
-version: "3"
-
 services:
-
   backend1:
     image: risvanthkm/devops-task-backend:latest
     environment:
@@ -48,7 +45,9 @@ services:
     volumes:
       - ./certs:/etc/nginx/certs:ro
     depends_on:
-      - backend
+      - backend1
+      - backend2
+      - backend3
 
   db:
     image: postgres:17
