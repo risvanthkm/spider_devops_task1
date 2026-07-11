@@ -6,10 +6,8 @@ ENV VITE_CLASS_ID=107125
 
 COPY package*.json ./
 
-RUN addgroup -S appgroup && \
-    adduser -S appuser -G appgroup -h /home/appuser && \
-    mkdir -p /home/appuser && \
-    chown -R appuser:appgroup /home/appuser
+RUN groupadd -r appgroup && \
+    useradd -r -g appgroup -m -d /home/appuser appuser
 
 USER appuser
 
