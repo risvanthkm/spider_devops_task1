@@ -12,6 +12,7 @@ import (
 	"github.com/CR45-NITT/cr45-reduced/backend/internal/auth"
 	"github.com/CR45-NITT/cr45-reduced/backend/internal/domain"
 	"github.com/CR45-NITT/cr45-reduced/backend/internal/store"
+	"os"
 )
 
 type Server struct {
@@ -62,12 +63,23 @@ func (s *Server) loggingMiddleware(next http.Handler) http.Handler {
 }
 
 func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write([]byte("ok"))
+    if r.Method != http.MethodGet {
+        w.WriteHeader(http.StatusMethodNotAllowed)
+        return
+    }
+
+    hostname, err := os.Hostname()
+    if err != nil {
+        hostname = "unknown"
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+
+    _ = json.NewEncoder(w).Encode(map[string]string{
+        "status":   "ok",
+        "hostname": hostname,
+    })
 }
 
 func (s *Server) handleGetTimetable(w http.ResponseWriter, r *http.Request) {
