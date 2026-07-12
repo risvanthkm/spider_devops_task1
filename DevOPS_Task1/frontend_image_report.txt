@@ -1,4 +1,3 @@
-
 ┌────────────────────────────────────────────────────────┬────────┬─────────────────┬─────────┐
 │                         Target                         │  Type  │ Vulnerabilities │ Secrets │
 ├────────────────────────────────────────────────────────┼────────┼─────────────────┼─────────┤
@@ -75,4 +74,3 @@ Total: 14 (UNKNOWN: 0, LOW: 0, MEDIUM: 10, HIGH: 4, CRITICAL: 0)
   - Version 0.72.0 of Trivy is now available, current version is 0.71.2
 
 To suppress version checks, run Trivy scans with the --skip-version-check flag
-
