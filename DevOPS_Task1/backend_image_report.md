@@ -1,5 +1,6 @@
 ## Before Fixing
-'''
+
+```
 Report Summary
 
 ┌───────────────────────────────────────────────────────┬──────────┬─────────────────┬─────────┐
@@ -130,10 +131,12 @@ Total: 20 (UNKNOWN: 1, LOW: 1, MEDIUM: 6, HIGH: 10, CRITICAL: 2)
   - Version 0.72.0 of Trivy is now available, current version is 0.71.2
 
 To suppress version checks, run Trivy scans with the --skip-version-check flag
-'''
+```
 
 ## After Fixing 
-'''
+> Fixed the vulnerabilities by updating the Postgres Driver to the latest version
+
+``` bash
 otus@otus:~/Documents/DevOps/SPIDER_DEVOPS/SPIDER_DEVOPS_TASK1/spider_devops_task1/DevOPS_Task1/backend$ go get github.com/jackc/pgx/v5@latest
 go mod tidy
 go: downloading github.com/jackc/pgx/v5 v5.10.0
@@ -143,9 +146,10 @@ go: downloading github.com/stretchr/testify v1.11.1
 go: downloading golang.org/x/sync v0.17.0
 go: upgraded github.com/jackc/pgx/v5 v5.7.5 => v5.10.0
 go: upgraded golang.org/x/sync v0.13.0 => v0.17.0
-go: upgraded golang.org/x/text v0.24.0 => v0.29.0'''
+go: upgraded golang.org/x/text v0.24.0 => v0.29.0
+```
 
-
+```
 Report Summary
 
 ┌───────────────────────────────────────────────────────┬──────────┬─────────────────┬─────────┐
@@ -183,5 +187,5 @@ Legend:
 
 To suppress version checks, run Trivy scans with the --skip-version-check flag
 
-
+```
 
