@@ -301,9 +301,173 @@ Also redirection from HTTP to HTTPS is also implemeted using the HTTP status cod
 
 To verify this visit `http://localhost` 
 
+# Task 2 Documentation
+
+### Overview 
+> This task aims upgrading the containerization to the production level. Implementing several security features. Built CI/CD pipelines, implemented horizontal scaling, analyzed performance using wrk and scanned the images using Trivy.
+
+## System Architecture
+```mermaid
+graph TD
+
+    User((Client))
+
+    User -->|HTTPS 443| Nginx
+
+    subgraph Docker Network
+        Nginx --> Backend1
+        Nginx --> Backend2
+        Nginx --> Backend3
+
+        Backend1 --> PostgreSQL
+        Backend2 --> PostgreSQL
+        Backend3 --> PostgreSQL
+    end
+```
+
+## Reverse Proxy using Nginx
+
+We have already implemented SSL/TLS termination using self signed certificates, compression using gzip. 
+
+### Managed CORS headers 
+```
+add_header Access-Control-Allow-Origin "https://localhost" always;
+            add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS" always;
+```
+Allowing localhost to access the backend servers and enabling it to perform HTTP METHODS GET, POST, PUT, DELETE, OPTIONS
+
+### HSTS
+HSTS stands for HTTP Strict Transport Security. Instructs the browser to use only HTTPS not HTTP anymore. Browser converts HTTP to HTTPS before a network connection
+
+```
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+```
+
+added this line to server block in nginx
+
+## CI/CD Pipelines 
+
+```mermaid
+flowchart TD
+
+    A([Developer Pushes Code]) --> C[GitHub Repository]
+
+    C --> D[Checkout Repository]
+
+    D --> E[Frontend: Install Dependencies]
+    E --> F[Frontend: Build Production Assets]
+
+    F --> G[Backend: Run Go Tests]
+
+    G --> H[Build Frontend Docker Image]
+    G --> I[Build Backend Docker Image]
+
+    H --> J[Authenticate with Docker Hub]
+    I --> J
+
+    J --> K[Push Versioned Images]
+    K --> L[Push Latest Images]
+
+    L --> M[Retrieve Jenkins Credentials]
+
+    M --> N[Retrieve SSL Certificate]
+    M --> O[Retrieve SSL Private Key]
+    M --> P[Retrieve App Secret]
+    M --> Q[Retrieve PostgreSQL Credentials]
+
+    N --> R[Generate Deployment Files]
+    O --> R
+    P --> R
+    Q --> R
+
+    R --> S[Create .env]
+    R --> T[Copy TLS Certificate & Key]
+
+    S --> U[Docker Compose Pull]
+    T --> U
+
+    U --> V[Deploy Updated Containers]
+
+    V --> W[Remove Unused Images]
+
+    W --> X[Health Check]
+
+    X -->|Success| Y([Deployment Successful])
+
+    X -->|Failure| Z([Deployment Failed])
+
+    Y --> AA[Clean Jenkins Workspace]
+    Z --> AA
+```
+
+## Production Optimization
+
+- Removed hardcoded Environment variables from docker-compose file 
+- Applied rate limiter to /api/
+- Limited memory and cpu(s) for the docker service
+- Setting Referrer Policy header as strict-origin-when-cross-origin
+- Setting X-Content-Type-Options: nosniff
+- Setting X-Frame-Options: DENY
+- Permissions-Policy: geolocation=(), microphone=(), camera=()
+
+## Horizontal Scaling 
+```mermaid
+graph LR
+
+Client((Client))
+    --> Nginx[Nginx Load Balancer]
+
+Nginx --> Backend1[Backend Replica 1]
+Nginx --> Backend2[Backend Replica 2]
+Nginx --> Backend3[Backend Replica 3]
+
+Backend1 --> DB[(PostgreSQL)]
+Backend2 --> DB
+Backend3 --> DB
+```
+
+1. Creating many instances for the backend using docker compose
+2. Configured Load Balancing using nginx
+```
+upstream backend_pool {
+    server backend1:9090 max_fails=3 fail_timeout=30s;
+    server backend2:9090 max_fails=3 fail_timeout=30s;
+    server backend3:9090 max_fails=3 fail_timeout=30s;
+}
+```
+### Fail Over Strategy
+If one server goes down, another server automatically takes over so the application remains available.
+
+Request 1: Fails. (Count = 1)
+
+Request 2: Fails within 30 seconds of the first. (Count = 2)
+
+Request 3: Fails within 30 seconds of the first. (Count = 3)
+
+Server Down: NGINX stops sending new client requests to backend3 and waits for 30 seconds.
+
+Cooldown: After 30 seconds, NGINX will send one probe request to check if the server is back online. If it succeeds, the server is returned to the rotation; if it fails, the 30-second cooldown resets
+
+nginx detects backend instance has failed 
+```
+proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+proxy_next_upstream_tries 3;
+```
+
+`proxy_next_upstream` tells Nginx:
+
+If the current backend fails for any of these reasons, automatically retry the request on another backend.
+
+Reasons are specified like error, timeout, invalid_header, .. etc
+
+## Performance Testing 
 
 
----
+
+
+
+
+
 
 
 
