@@ -201,7 +201,6 @@ The documentation includes:
 - Performance Testing
 - Vulnerability Scanning
 - Observability
-- Future Improvements
 
 ---
 
