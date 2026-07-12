@@ -462,10 +462,10 @@ proxy_next_upstream_tries 3;
 If the current backend fails for any of these reasons, automatically retry the request on another backend.
 Reasons are specified like error, timeout, invalid_header, .. etc
 
-### Screenshots of Load Balancing Wor
+### Screenshots of Load Balancing Work
 ![Screenshots of Load Balancing Work](screenshots/Screenshot%20from%202026-07-13%2001-32-40.png)
 
-### After killing the Backend instance (1492db91ba60)
+### After crashing the Backend instance (1492db91ba60)
 
 ![After stopping backend instance 1492db91ba60](screenshots/Screenshot%20from%202026-07-13%2001-34-06.png)
 
