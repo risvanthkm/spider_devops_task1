@@ -467,7 +467,7 @@ Reasons are specified like error, timeout, invalid_header, .. etc
 
 ### After killing the Backend instance (1492db91ba60)
 
-![After stopping backend instance 1492db91ba60](DevOPS_Task1/screenshots/Screenshot%20from%202026-07-13%2001-34-06.png)
+![After stopping backend instance 1492db91ba60](screenshots/Screenshot%20from%202026-07-13%2001-34-06.png)
 
 ## Performance Testing 
 
@@ -600,7 +600,7 @@ The affected dependencies were updated to their latest secure versions and the D
 
 A follow-up Trivy scan confirmed that the backend image no longer contained the previously reported dependency vulnerabilities.
 
-[Backend Image Scan Raw Output](/reports/backend_image_report.md)
+[Backend Image Scan Raw Output](reports/backend_image_report.md)
 
 ---
 
