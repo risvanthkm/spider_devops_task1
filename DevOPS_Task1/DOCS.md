@@ -463,6 +463,10 @@ If the current backend fails for any of these reasons, automatically retry the r
 
 Reasons are specified like error, timeout, invalid_header, .. etc
 
+![Screenshots of Load Balancing Work](DevOPS_Task1/screenshots/Screenshot%20from%202026-07-13%2001-32-40.png)
+
+![After stopping backend instance 1492db91ba60](DevOPS_Task1/screenshots/Screenshot%from%2026-07-13%01-34-06.png)
+
 ## Performance Testing 
 
 Performance testing was conducted to evaluate the application's scalability, responsiveness, and resilience under concurrent client requests. The tests also compared the application's behavior before and after horizontal scaling, and verified that service availability was maintained during backend failures.
@@ -510,7 +514,7 @@ wrk -t4 -c100 -d30s https://localhost/healthz
 
 The benchmark results demonstrate that horizontal scaling significantly improved request throughput and reduced the processing load on individual backend instances. When two backend replicas were stopped, the application's throughput decreased as expected due to reduced processing capacity. However, the remaining backend continued serving requests successfully, confirming that the configured failover strategy maintained application availability.
 
-[Performance Analysis Documentation](DevOPS_Task1/performance_analysis_report.md)
+[Performance Analysis Documentation](DevOPS_Task1/reports/performance_analysis_report.md)
 
 ---
 
@@ -594,7 +598,7 @@ The affected dependencies were updated to their latest secure versions and the D
 
 A follow-up Trivy scan confirmed that the backend image no longer contained the previously reported dependency vulnerabilities.
 
-[Backend Image Scan Raw Output](DevOPS_Task1/backend_image_report.md)
+[Backend Image Scan Raw Output](DevOPS_Task1/reports/backend_image_report.md)
 
 ---
 
@@ -610,7 +614,7 @@ The majority of findings originated from system libraries such as:
 These packages are maintained by the Alpine Linux distribution and are independent of the application code.
 No Critical vulnerabilities were identified.
 
-[Frontend Image Scan Raw Output](DevOPS_Task1/frontend_image_report.txt)
+[Frontend Image Scan Raw Output](DevOPS_Task1/reports/frontend_image_report.txt)
 
 ---
 
