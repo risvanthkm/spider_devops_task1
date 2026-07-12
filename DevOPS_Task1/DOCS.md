@@ -334,8 +334,7 @@ We have already implemented SSL/TLS termination using self signed certificates, 
 add_header Access-Control-Allow-Origin "https://localhost" always;
             add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS" always;
 ```
-Allowing localhost to access the backend servers and enabling it to perform HTTP METHODS GET, POST, PUT, DELETE, OPTIONS
-
+Allows web applications served from https://localhost to make cross-origin requests to the backend APIs 
 ### HSTS
 HSTS stands for HTTP Strict Transport Security. Instructs the browser to use only HTTPS not HTTP anymore. Browser converts HTTP to HTTPS before a network connection
 
@@ -435,6 +434,10 @@ upstream backend_pool {
     server backend3:9090 max_fails=3 fail_timeout=30s;
 }
 ```
+### Verification of requests across all Replicas
+
+Please run the `DevOPS_Task1/verify_load_balancer.sh` bash script to verify multi replicas handling connections
+
 ### Fail Over Strategy
 If one server goes down, another server automatically takes over so the application remains available.
 
@@ -462,12 +465,200 @@ Reasons are specified like error, timeout, invalid_header, .. etc
 
 ## Performance Testing 
 
+Performance testing was conducted to evaluate the application's scalability, responsiveness, and resilience under concurrent client requests. The tests also compared the application's behavior before and after horizontal scaling, and verified that service availability was maintained during backend failures.
+
+## Testing Tool
+
+The application was benchmarked using **wrk**, a modern HTTP benchmarking tool capable of generating high volumes of concurrent requests.
+
+Example command:
+
+```bash
+wrk -t4 -c100 -d30s https://localhost/healthz
+```
+
+| Parameter | Description |
+|-----------|-------------|
+| `-t4` | Uses 4 worker threads |
+| `-c100` | Maintains 100 concurrent connections |
+| `-d30s` | Runs the benchmark for 30 seconds |
+
+## Benchmark Results
+
+### Three Backend Replicas
+
+| Metric | Result |
+|---------|--------|
+| Requests/sec | 6599.62 |
+| Average Latency | 30.60 ms |
+| Transfer Rate | 2.45 MB/s |
+| Availability | 100% |
+
+---
+
+### Single Backend (Failover)
+
+| Metric | Result |
+|---------|--------|
+| Requests/sec | 2773.82 |
+| Average Latency | 55.63 ms |
+| Transfer Rate | 1.17 MB/s |
+| Availability | 100% |
+---
+
+## Performance Analysis
+
+The benchmark results demonstrate that horizontal scaling significantly improved request throughput and reduced the processing load on individual backend instances. When two backend replicas were stopped, the application's throughput decreased as expected due to reduced processing capacity. However, the remaining backend continued serving requests successfully, confirming that the configured failover strategy maintained application availability.
+
+[Performance Analysis Documentation](DevOPS_Task1/performance_analysis_report.md)
+
+---
+
+## Conclusion
+
+The performance evaluation verified that:
+
+- Horizontal scaling increased application throughput.
+- Nginx successfully balanced traffic across multiple backend replicas.
+- The application remained available during backend failures.
+- The configured failover strategy ensured uninterrupted service with graceful performance degradation under reduced backend capacity.
+
+## Security Exploration
+
+## Container Hardening
+
+Docker containers run as the root user. If an attacker compromises the application, they would inherit root privileges inside the container, increasing the risk of privilege escalation and unauthorized system access.
+
+### Implementation
+
+A dedicated unprivileged user (appuser) was created inside the backend image, and the application was configured to run under this user instead of root.
+
+```
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+```
+## Read-Only Container FileSystem
+
+A writable filesystem allows attackers to modify application binaries, configuration files, or create malicious files if the container is compromised.
+
+### Implementation
+
+The backend container was configured with a read-only root filesystem using Docker Compose.
+```
+read_only: true
+```
+
+## Dropping Linux Capabilities
+
+Linux capabilities divide root privileges into smaller permission sets. By default, containers receive several capabilities that may not be required by the application. Removing unnecessary capabilities reduces the attack surface.
+
+```
+cap_drop:
+  - ALL
+cap_add:
+- NET_BIND_SERVICE
+```
+
+## 6.7 Vulnerability Scanning
+
+### Tool Used
+
+Container images were scanned using **Trivy**, an open-source vulnerability scanner that detects known vulnerabilities in operating system packages and application dependencies.
+
+---
+
+### Scan Procedure
+
+The frontend and backend Docker images were scanned after the build process using:
+
+```bash
+trivy image risvanthkm/devops-task-frontend:latest
+
+trivy image risvanthkm/devops-task-backend:latest
+```
+
+The scan analyzed:
+
+- Operating system packages
+- Go module dependencies
+- Application libraries
+- Known CVEs (Common Vulnerabilities and Exposures)
+
+---
+
+### Backend Scan Results
+
+The initial backend scan reported vulnerabilities in Go module dependencies (Postgres Driver).
+
+The affected dependencies were updated to their latest secure versions and the Docker image was rebuilt.
+
+A follow-up Trivy scan confirmed that the backend image no longer contained the previously reported dependency vulnerabilities.
+
+[Backend Image Scan Raw Output](DevOPS_Task1/backend_image_report.md)
+
+---
+
+### Frontend Scan Results
+
+The frontend image scan reported vulnerabilities in the Alpine Linux base image.
+
+The majority of findings originated from system libraries such as:
+
+- `libexpat`
+- `c-ares`
+
+These packages are maintained by the Alpine Linux distribution and are independent of the application code.
+No Critical vulnerabilities were identified.
+
+[Frontend Image Scan Raw Output](DevOPS_Task1/frontend_image_report.txt)
+
+---
+
+### Applied Mitigations
+
+The following security improvements were implemented:
+
+- Updated vulnerable Go dependencies to secure versions.
+- Rebuilt backend Docker images after dependency updates.
+- Used the latest available Docker base images.
+- Implemented multi-stage Docker builds to reduce the runtime attack surface.
+- Configured containers to run as non-root users.
+- Enabled read-only container filesystems where applicable.
+- Restricted Linux capabilities using `cap_drop` and `cap_add`.
+- Integrated Trivy scanning as part of the security validation process.
+
+---
+
+### Remaining Risks
+
+The remaining vulnerabilities are associated with upstream Alpine Linux packages used by the frontend image.
+
+These packages are maintained by the Alpine Linux maintainers and will be resolved by upgrading the base image once patched package versions become available.
+
+No application-specific vulnerabilities were identified after updating backend dependencies.
+
+---
+
+## 6.8 Security Summary
+
+| Security Measure | Status |
+|------------------|:------:|
+| Non-root Containers | ✅ |
+| Read-only Filesystem | ✅ |
+| Linux Capability Restrictions | ✅ |
+| No Privilege Escalation | ✅ |
+| HTTPS (TLS 1.2 & TLS 1.3) | ✅ |
+| HTTP → HTTPS Redirection | ✅ |
+| HSTS | ✅ |
+| Security Headers | ✅ |
+| Rate Limiting | ✅ |
+| Secure Secret Management (Jenkins Credentials) | ✅ |
+| Docker Image Vulnerability Scanning (Trivy) | ✅ |
+| Go Dependency Updates | ✅ |
+| Multi-stage Docker Builds | ✅ |
+| Vulnerability Mitigation | ✅ |
 
 
+# Thank You 
 
-
-
-
-
-
-
+---
