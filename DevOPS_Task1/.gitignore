@@ -3,3 +3,4 @@ frontend/dist/
 .vscode/
 certs
 .env
+**/__pycache__/
